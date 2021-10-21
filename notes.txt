@@ -1,0 +1,2 @@
+Use to Write/Read to ThingSpeak
+https://medium.com/geekculture/the-naivest-way-to-send-and-retrieve-data-from-cloud-using-python-52a3e4b5fe24
