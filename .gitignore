@@ -1,1 +1,2 @@
-ClientVirtualEnvironment/
+#Ignore VirtualEnvironment Directory
+ClientVirtualEnviroment/

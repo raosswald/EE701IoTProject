@@ -1,6 +1,5 @@
 import os
-import random
-imb port urllib
+import urllib
 import sys
 import folium
 from folium import features
