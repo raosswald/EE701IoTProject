@@ -1,2 +1,13 @@
 Use to Write/Read to ThingSpeak
 https://medium.com/geekculture/the-naivest-way-to-send-and-retrieve-data-from-cloud-using-python-52a3e4b5fe24
+
+PyQt5 Tutorial
+https://zetcode.com/pyqt/qwebengineview/
+
+Folium Tutorial
+https://python-visualization.github.io/folium/quickstart.html
+
+To Do:
+-Get Sensors working
+-Get Data sent to ThingSpeak
+-Create Markers from data on ThingSpeak
