@@ -7,6 +7,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
 
+
 def getJson(url):
     # this function pulls the json data from an url and creates a dictionary
     #access the dictionary in the following way
@@ -23,11 +24,20 @@ def createMarkersfromJSON(jsonDic, map):
 
     for i in range(markerCount):
         smolDic = jsonDic['feeds'][i]
+
+        if int(smolDic['field4']) > 66:
+            markerColor = 'red'
+            toolTipStr = ":("
+        else:
+            markerColor = 'green'
+            toolTipStr = ":)"
+
+
         folium.Marker(
             location=[smolDic['field1'], smolDic['field2']], 
-            popup="Temp: " + str(smolDic['field2']), 
-            tooltip="Click for Data", 
-            icon=folium.Icon(color='red')
+            popup="Temp: " + str(smolDic['field4'] + "\nHumidity: "), 
+            tooltip=toolTipStr, 
+            icon=folium.Icon(color=markerColor)
             ).add_to(map)
 
 
@@ -72,7 +82,7 @@ class Example(QWidget):
         map = folium.Map(location=[43, -79])
 
         #download data from cloud as JSON dic
-        jsonData = getJson("https://api.thingspeak.com/channels/1541460/feeds.json?results=2")
+        jsonData = getJson("https://api.thingspeak.com/channels/1541460/feeds.json?results")
         createMarkersfromJSON(jsonData, map)
         
         #saves the map as html

@@ -1,9 +1,9 @@
 import urllib.request
 import time
 
-gpsLat = [43.0, 43.0]
-gpslong = [-79, -79]
-temp = [68, 68]
+gpsLat = [43.000012, 43.0]
+gpslong = [-78.787825, -79]
+temp = [65, 68]
 
 
 for i in range(2):
