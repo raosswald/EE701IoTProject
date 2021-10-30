@@ -1,7 +1,5 @@
-import os
 from urllib.request import urlopen
-import sys
-import folium, json
+import sys, folium, json
 from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QWidget, QPushButton
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
