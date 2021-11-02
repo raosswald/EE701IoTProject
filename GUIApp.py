@@ -20,6 +20,7 @@ def createMarkersfromJSON(jsonDic, map):
 
     markerCount = len(jsonDic['feeds'])
 
+    #markerCount = 3;
     for i in range(markerCount):
         smolDic = jsonDic['feeds'][i]
 
