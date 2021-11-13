@@ -1,5 +1,7 @@
 from urllib.request import urlopen
 import sys, folium, json
+import numpy as np
+from PyQt5.QtCore import hex_
 from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QWidget, QPushButton
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
@@ -20,24 +22,68 @@ def createMarkersfromJSON(jsonDic, map):
 
     markerCount = len(jsonDic['feeds'])
 
-    #markerCount = 3;
+    dataTypes = 4
+    frames = 0
+
+    #find the number of different frames
+    frameIds = []
     for i in range(markerCount):
-        smolDic = jsonDic['feeds'][i]
+        hexData = jsonDic['feeds'][i]['field1']
+        frameNum = int(hexData[hexData.find('F') + 1])
+        if(frameNum not in frameIds):
+            frameIds.append(frameNum)
+            #Use this number to create an array
+            frames += 1
 
-        if int(smolDic['field4']) > 66:
-            markerColor = 'red'
-            toolTipStr = ":("
+    
+    #creates a correct sized array with unique v
+    organizedData = np.full(shape=(frames, dataTypes), fill_value=None)    
+        
+
+    for j in range(markerCount):
+        hexData = jsonDic['feeds'][j]['field1']
+
+        #Get data out of hex string to a useable format
+        dataType = int(hexData[hexData.find('B') + 1])
+        frameNum = int(hexData[hexData.find('F') + 1])
+        infoData = hexData[0 : hexData.find('F')]
+        if('D' in infoData):
+            infoData = float(infoData.replace('D', '.'))
         else:
-            markerColor = 'green'
-            toolTipStr = ":)"
+            infoData = float(infoData)
+
+        #DO ME NEXT!!!!!!!  
+        #append data correctly in organizedData Array
+
+    
 
 
-        folium.Marker(
-            location=[smolDic['field1'], smolDic['field2']], 
-            popup="Temp: " + str(smolDic['field4'] + "\nHumidity: "), 
-            tooltip=toolTipStr, 
-            icon=folium.Icon(color=markerColor)
-            ).add_to(map)
+    currentData = [frameNum, dataType, infoData]
+
+    
+
+    print(currentData)
+    
+
+
+    #markerCount = 3;
+    # for i in range(markerCount):
+    #     smolDic = jsonDic['feeds'][i]
+
+        # if int(smolDic['field4']) > 66:
+        #     markerColor = 'red'
+        #     toolTipStr = ":("
+        # else:
+        #     markerColor = 'green'
+        #     toolTipStr = ":)"
+
+
+        # folium.Marker(
+        #     location=[smolDic['field1'], smolDic['field2']], 
+        #     popup="Temp: " + str(smolDic['field4'] + "\nHumidity: "), 
+        #     tooltip=toolTipStr, 
+        #     icon=folium.Icon(color=markerColor)
+        #     ).add_to(map)
 
 
 
@@ -81,7 +127,7 @@ class Example(QWidget):
         map = folium.Map(location=[43, -79])
 
         #download data from cloud as JSON dic
-        jsonData = getJson("https://api.thingspeak.com/channels/1541460/feeds.json?results")
+        jsonData = getJson("https://thingspeak.com/channels/1541460/field/1.json")
         createMarkersfromJSON(jsonData, map)
         
         #saves the map as html
