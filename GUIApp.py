@@ -35,55 +35,51 @@ def createMarkersfromJSON(jsonDic, map):
             #Use this number to create an array
             frames += 1
 
-    
     #creates a correct sized array with unique v
     organizedData = np.full(shape=(frames, dataTypes), fill_value=None)    
-        
+    hexDataBank = []
 
+    #Get rid of repeat data
     for j in range(markerCount):
         hexData = jsonDic['feeds'][j]['field1']
+        if hexData not in hexDataBank:
+            hexDataBank.append(hexData)
+        #DO ME NEXT!!!!!!!  
+        #append data correctly in organizedData Array
 
+
+    #append data to organizedData
+    for currentHex in hexDataBank:
+
+        
         #Get data out of hex string to a useable format
-        dataType = int(hexData[hexData.find('B') + 1])
-        frameNum = int(hexData[hexData.find('F') + 1])
-        infoData = hexData[0 : hexData.find('F')]
+        dataType = int(currentHex[currentHex.find('B') + 1])
+        frameNum = int(currentHex[currentHex.find('F') + 1])
+        infoData = currentHex[0 : currentHex.find('F')]
         if('D' in infoData):
             infoData = float(infoData.replace('D', '.'))
         else:
             infoData = float(infoData)
 
-        #DO ME NEXT!!!!!!!  
-        #append data correctly in organizedData Array
+
+        #this organizes the payload into a useable array
+        iterInOrganizedData = frameIds.index(frameNum)
+
+        if(organizedData[iterInOrganizedData][dataType] == None):
+            organizedData[iterInOrganizedData][dataType] = infoData
+        
+
 
     
-
-
-    currentData = [frameNum, dataType, infoData]
-
+    #print(hexDataBank)
     
 
-    print(currentData)
-    
+    print(organizedData)
+    for i in range(organizedData.size[0]):
+        
+    #folium.Marker(location=[43, -78.7849], popup="Center of the Map", tooltip="Click for Data", icon=folium.Icon(color='orange')).add_to(map)
 
 
-    #markerCount = 3;
-    # for i in range(markerCount):
-    #     smolDic = jsonDic['feeds'][i]
-
-        # if int(smolDic['field4']) > 66:
-        #     markerColor = 'red'
-        #     toolTipStr = ":("
-        # else:
-        #     markerColor = 'green'
-        #     toolTipStr = ":)"
-
-
-        # folium.Marker(
-        #     location=[smolDic['field1'], smolDic['field2']], 
-        #     popup="Temp: " + str(smolDic['field4'] + "\nHumidity: "), 
-        #     tooltip=toolTipStr, 
-        #     icon=folium.Icon(color=markerColor)
-        #     ).add_to(map)
 
 
 
