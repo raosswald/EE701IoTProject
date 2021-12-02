@@ -59,7 +59,7 @@ def createMarkersfromJSON(jsonDic, map):
         #DO ME NEXT!!!!!!!  
         #append data correctly in organizedData Array
 
-    print(frameIds)
+    #print(frameIds)
     #print(hexDataBank)
     timeIteration = 0;
     #append data to organizedData
@@ -95,7 +95,7 @@ def createMarkersfromJSON(jsonDic, map):
     #print(hexDataBank)
     
 
-    print(organizedData)
+    #print(organizedData)
     for i in range(organizedData.shape[0]):
         #convert lat and long to decimal
         if(organizedData[i][0] != None and organizedData[i][1] != None):
