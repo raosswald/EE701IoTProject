@@ -2,7 +2,7 @@ from urllib.request import urlopen
 import sys, folium, json
 import numpy as np
 from PyQt5.QtCore import hex_
-from PyQt5.QtWidgets import QMainWindow, QApplication, QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QGridLayout, QLabel, QLineEdit, QFormLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
@@ -144,22 +144,33 @@ class Example(QWidget):
 
     def initUI(self):
 
-        vbox = QVBoxLayout(self)
+        #vbox = QVBoxLayout(self)
+        gridLayout = QGridLayout()
 
         self.webEngineView = QWebEngineView()
         self.loadPage()
 
         # NewMap = QPushButton("Update Map")
         # NewMap.clicked.connect(self.GenerateNewMap)
-
+        
         button = QPushButton("Reload Map")
         button.clicked.connect(self.loadPage)
 
-        vbox.addWidget(self.webEngineView)
-        vbox.addWidget(button)
+        textLabel = QLabel("Air Quality Prediction:")
+
+
+        latBox = QLineEdit()
+        longBox = QLineEdit()
+
+        gridLayout.addWidget(self.webEngineView, 0, 0)
+        gridLayout.addWidget(button, 1, 0)
+        gridLayout.addWidget(textLabel, 2, 0)
+        gridLayout.addWidget(latBox, 3, 0)
+        gridLayout.addWidget(longBox, 4, 0)
+        
         # vbox.addWidget(NewMap)
 
-        self.setLayout(vbox)
+        self.setLayout(gridLayout)
 
         self.setGeometry(300, 300, 750, 650)
         self.setWindowTitle('MapMyAir')
