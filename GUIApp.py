@@ -1,5 +1,6 @@
+from os import O_RDWR
 from urllib.request import urlopen
-import sys, folium, json
+import sys, folium, json, math
 import numpy as np
 from PyQt5.QtCore import hex_
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QGridLayout, QLabel, QLineEdit, QFormLayout
@@ -45,7 +46,7 @@ def createMarkersfromJSON(jsonDic, map):
             frames += 1
 
     #creates a correct sized array with unique v
-    organizedData = np.full(shape=(frames, dataTypes), fill_value=None)    
+    organizedData = np.full(shape=(frames, dataTypes + 1), fill_value=None)    
     hexDataBank = []
     timeDataBank = []
 
@@ -111,23 +112,33 @@ def createMarkersfromJSON(jsonDic, map):
             #classifies markers based on air quality
             if(organizedData[i][3] != None):
                 currentPM = int(organizedData[i][3])
-                print(currentPM)
+
+
+                
                 if(currentPM <= cleanBound):
                     markerColor = 'green'
+                    organizedData[i][5] = 'green'
                 elif(currentPM > cleanBound and currentPM < dangerBound):
                     markerColor = 'orange'
+                    organizedData[i][5] = 'orange'
                 elif(currentPM >= dangerBound):
                     markerColor = 'red'
+                    organizedData[i][5] = 'red'
 
 
                 folium.Marker(location=[latitude, -longitude], 
-                            popup=folium.Popup(html="<br><b>latitude: </b>" + str(latitude) + "</br>"
-                            + "<br><b>longitude: </b>" + str(longitude) + "</br>"
+                            popup=folium.Popup(html="<br><b>latitude: </b>" + str(latitude) + "N</br>"
+                            + "<br><b>longitude: </b>" + str(longitude) + "W</br>"
                             + "<br><b>altitude: </b>" + organizedData[i][2] + "</br>"
                             + "<br><b>PM2.5: </b>" + organizedData[i][3] + "</br>"
                             + "<br><b>Date: </b>\n<i>" + organizedData[i][4] + "</i></br>"), 
                             icon=folium.Icon(color=markerColor)
                             ).add_to(map)
+
+    return organizedData
+
+
+                
 
 
 
@@ -156,17 +167,26 @@ class Example(QWidget):
         button = QPushButton("Reload Map")
         button.clicked.connect(self.loadPage)
 
+        self.predictButton = QPushButton("Predict!")
+        self.predictButton.clicked.connect(self.knn)
+        
+
         textLabel = QLabel("Air Quality Prediction:")
+        self.predictLabel = QLabel("Set Coordinates to Get Air Quality Prediction")
 
-
-        latBox = QLineEdit()
-        longBox = QLineEdit()
+        self.latBox = QLineEdit("100")
+        self.longBox = QLineEdit("100")
 
         gridLayout.addWidget(self.webEngineView, 0, 0)
         gridLayout.addWidget(button, 1, 0)
         gridLayout.addWidget(textLabel, 2, 0)
-        gridLayout.addWidget(latBox, 3, 0)
-        gridLayout.addWidget(longBox, 4, 0)
+        gridLayout.addWidget(QLabel("Latitude(N)"), 3, 0)
+        gridLayout.addWidget(self.latBox, 4, 0)
+        gridLayout.addWidget(QLabel("Longitude(W)"), 5, 0)
+        gridLayout.addWidget(self.longBox, 6, 0)
+        gridLayout.addWidget(self.predictButton, 7, 0)
+        gridLayout.addWidget(self.predictLabel, 8 , 0)
+        
         
         # vbox.addWidget(NewMap)
 
@@ -185,7 +205,9 @@ class Example(QWidget):
 
         #download data from cloud as JSON dic
         jsonData = getJson("https://api.thingspeak.com/channels/1541460/fields/1.json?results=1000")
-        createMarkersfromJSON(jsonData, map)
+        #process markers on map
+        self.organizedData = createMarkersfromJSON(jsonData, map)
+        
         
         #saves the map as html
         map.save("index.html")
@@ -196,12 +218,83 @@ class Example(QWidget):
             html = f.read()
             self.webEngineView.setHtml(html)
 
-    # def GenerateNewMap(self):
-        
-    #     map = folium.Map(location=[43, -78.7849])
-    #     folium.Marker(location=[43, -78.7849], popup="Center of the Map", tooltip="Click for Data", icon=folium.Icon(color='orange')).add_to(map)
-    #     map.save("index.html")
+    def knn(self):
+        lat = float(self.latBox.text())
+        long = float(self.longBox.text())
 
+
+
+        dataPoints = self.organizedData.shape[0]
+        orderedDistances = []
+        closestPointsClass = []
+
+        for i in range(dataPoints):
+            currentPoint = self.organizedData[i]
+
+            currentClass = currentPoint[5]
+            #convert lat and long to decimal
+            if(currentPoint[0] != None and currentPoint[1] != None):
+                if(currentPoint[0][0] =='0'):
+                    currentLatitude = float(currentPoint[0][0:3]) +  float(currentPoint[0][3:])/60  
+                    #print(latitude)
+                    currentLongitude = float(currentPoint[1][0:3]) +  float(currentPoint[1][3:])/60 
+                    #print(longitude)
+                else:
+                    currentLatitude = float(currentPoint[0][0:2]) +  float(currentPoint[0][2:])/60
+                    currentLongitude = float(currentPoint[1][0:2]) +  float(currentPoint[1][2:])/60 
+        
+
+            #euclidian distance
+            distance = math.sqrt(math.pow((lat - currentLatitude), 2) + math.pow((long - currentLongitude), 2))
+
+            if len(orderedDistances) == 0:
+                orderedDistances.append(distance)
+                closestPointsClass.append(currentClass)
+            elif len(orderedDistances) > 0:
+                for j in range(len(orderedDistances)):
+                    if distance <= orderedDistances[j]:
+                        orderedDistances.insert(j, distance)
+                        closestPointsClass.insert(j, currentClass)
+                        break
+
+                    elif j + 1 == len(orderedDistances):
+                        orderedDistances.append(distance)
+                        closestPointsClass.append(currentClass)
+            
+
+
+
+            # print(currentPoint)
+            # print(currentLatitude)
+            # print(currentLongitude)
+            # print(currentClass)
+            # print(distance)
+
+        greenCount = 0
+        orangeCount = 0
+        redCount = 0
+        
+        for k in range(4):
+            if closestPointsClass[k] == 'green':
+                greenCount += 1
+            elif closestPointsClass[k] == 'orange':
+                orangeCount +=1
+            elif closestPointsClass[k] == 'red':
+                redCount += 1
+
+
+        if(greenCount > orangeCount and greenCount > redCount):
+            self.predictLabel.setText("Air is clean, no precautions for going outside")
+        elif(orangeCount > redCount and orangeCount > greenCount):
+            self.predictLabel.setText("Air has some pollution, take precaution when outside")
+        elif(redCount > greenCount and redCount > orangeCount):
+            self.predictLabel.setText("Air is very polluted, mask wearing reccomended")
+        else:
+            self.predictLabel.setText("error")
+            print("error")
+
+
+   
 
 
 
