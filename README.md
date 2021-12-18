@@ -68,9 +68,45 @@ The markers plotted are used for a qualitative prediction of the air quality by 
 
 ## Custom Packet Structure
 
+Since the packets sent over LoRaWAN are meant to be small in size and limited to Hexa-Decimal digits a custom packet structure was developed for the sent payloads. The microcontroller encodes the data to the hexadecimal packet structure before transmitting the packet over LoRaWAN. The client application then decodes the packets to useable data when a new marker is generated.
+
+### HexaDecimal Key
+
+| Hex Code | Meaning |
+| --- | --- |
+| 0xD | Decimal Point '.' |
+| 0xF | Frame Identifier placed before Frame Number |
+| 0xB | Type Identifier placed before Type ID|
+
+### Type IDs
+
+| Type | HEX ID  |
+| --- | --- |
+| Latitude |0x0 |
+| Longitude | 0x1 |
+| Altitude | 0x2 |
+| PM2.5 AQI | 0x3 |
+
+### Example 
+
+>An example of a payload packet will look like:
+>
+>0x0190D20F13B2
+>
+>The packet represent:
+>| Data | Frame | Data Type|
+>| --- | --- | --- |
+>| 190.20 | 13 | Altitude | 
+
+
 
 ## Cloud Database
- 
+[ThingSpeak](https://thingspeak.com/) is used as the cloud database to store the received packets from LoRaWAN.  The packets are all sent to one channel on ThingSpeak in our custom Packet Structure. The channel is accesible anywhere there is an internet connection. The client application accesses our data using a URL to simply read the data in the channel. The data gets stored in the JSON format and is converted to a Python Dictionary to easily access the data. The data packet is stored in 'field1' and the time that the data was received at is stored in 'created_at'.
+
+> ![Map My Air Client Application](/Documentation/MapMyAirJSON.png)
+> 
+> MapMyAir JSON Example
+> 
 ## Dependencies
 
 All the libraries used in MapMyAir are free and available for download.
@@ -91,9 +127,10 @@ All the libraries used in MapMyAir are free and available for download.
 >```
 >Arduino Libraries
 
-## Reflections & Further Work
 
 ## Credits
+Ryan Osswald | Software Implementation
+
 Erik Vickerd | Hardware Implementation
 
 University at Buffalo Department of Electrical Engineering | Hardware Funding

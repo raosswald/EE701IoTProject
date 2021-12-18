@@ -145,7 +145,7 @@ def createMarkersfromJSON(jsonDic, map):
 
 
 #https://zetcode.com/pyqt/qwebengineview/
-class Example(QWidget):
+class MapMyAirClient(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -300,6 +300,6 @@ class Example(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Example()
+    window = MapMyAirClient()
     window.show()
     sys.exit(app.exec_())
