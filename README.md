@@ -5,7 +5,7 @@ MapMyAir is a proof of concept system to viusalize and predict air quality in yo
 > 
 > MapMyAir Client Application GUI running on MacOS
 
-### Vide Demonstration
+### Video Demonstration
 https://www.youtube.com/watch?v=I_mFrcK4Gwo
 
 ## Hardware
