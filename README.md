@@ -1,5 +1,5 @@
 # MapMyAir
-MapMyAir is a proof of concept system to viusalize and predict air quality in your local neighboorhood. MapMyAir uses the LoRaWAN(proprietary low-power wide-area network) to collect air quality metrics with custom hardware. The custom hardware is moved around your local area and collects data about the air. The collected data is formatted and forwarded to ThingSpeak after being trasnmitted over LoRaWAN, then pulled from a ThingSpeak Channel to a custom client GUI application. This system was deployed at the University at Buffalo's North Campus. 
+MapMyAir is a proof of concept system to visualize and predict air quality in your local neighborhood. MapMyAir uses the LoRaWAN(proprietary low-power wide-area network) to collect air quality metrics with custom hardware. The custom hardware is moved around your local area and collects data about the air. The collected data is formatted and forwarded to ThingSpeak after being transmitted over LoRaWAN, then pulled from a ThingSpeak Channel to a custom client GUI application. This system was deployed at the University at Buffalo's North Campus. 
 
 > ![Map My Air Client Application](/Documentation/MapMyAirClientApp.png)
 > 
