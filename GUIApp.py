@@ -1,9 +1,8 @@
-from os import O_RDWR
 from urllib.request import urlopen
 import sys, folium, json, math
 import numpy as np
 from PyQt5.QtCore import hex_
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QGridLayout, QLabel, QLineEdit, QFormLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, QLabel, QLineEdit, QFormLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
